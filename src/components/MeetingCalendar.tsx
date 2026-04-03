@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react'; // Fix: Added useEffect import
+import { useState, useEffect } from 'react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
+import { Video, Trash2, Plus, CheckCircle } from 'lucide-react';
 
-// TypeScript interface to define our data structure
 interface Meeting {
   id: number;
   date: string;
@@ -13,7 +13,7 @@ interface Meeting {
 const MeetingCalendar = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   
-  // 1. DATA PERSISTENCE: Load saved data from the browser's memory
+  // Data Persistence
   const [meetings, setMeetings] = useState<Meeting[]>(() => {
     const saved = localStorage.getItem('nexus_meetings');
     return saved ? JSON.parse(saved) : [];
@@ -26,11 +26,8 @@ const MeetingCalendar = () => {
 
   const [newSlot, setNewSlot] = useState("");
 
-  // 2. AUTO-SAVE: Save to memory whenever meetings or slots change
   useEffect(() => {
     localStorage.setItem('nexus_meetings', JSON.stringify(meetings));
-    
-    // Custom Event to update the dashboard "Pending" count
     const pendingCount = meetings.filter(m => m.status === 'Pending').length;
     window.dispatchEvent(new CustomEvent('update-pending-count', { detail: pendingCount }));
   }, [meetings]);
@@ -39,7 +36,6 @@ const MeetingCalendar = () => {
     localStorage.setItem('nexus_slots', JSON.stringify(availableTimes));
   }, [availableTimes]);
 
-  // 3. MODIFY SLOTS LOGIC (Milestone 2 Requirement)
   const addSlot = () => {
     if (newSlot.trim() !== "" && !availableTimes.includes(newSlot)) {
       setAvailableTimes([...availableTimes, newSlot]);
@@ -51,7 +47,6 @@ const MeetingCalendar = () => {
     setAvailableTimes(availableTimes.filter(t => t !== timeToDelete));
   };
 
-  // 4. MEETING ACTIONS
   const requestMeeting = (time: string) => {
     const newMeeting: Meeting = {
       id: Date.now(),
@@ -71,9 +66,11 @@ const MeetingCalendar = () => {
   return (
     <div className="space-y-6 animate-fade-in">
       
-      {/* ADD/MODIFY SLOTS SECTION */}
+      {/* MANAGE SLOTS */}
       <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
-        <h2 className="text-lg font-bold text-slate-800 mb-4">Manage Availability</h2>
+        <h2 className="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+          <Plus size={20} className="text-blue-600" /> Manage Availability
+        </h2>
         <div className="flex gap-2 mb-4">
           <input 
             type="text" 
@@ -82,37 +79,35 @@ const MeetingCalendar = () => {
             placeholder="Add time (e.g. 05:00 PM)"
             className="flex-1 border border-slate-200 p-2 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
           />
-          <button onClick={addSlot} className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
-            Add Slot
+          <button onClick={addSlot} className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+            Add
           </button>
         </div>
         <div className="flex flex-wrap gap-2">
           {availableTimes.map(time => (
             <div key={time} className="flex items-center gap-2 bg-blue-50 text-blue-700 px-3 py-1 rounded-full border border-blue-100">
               <span className="text-sm font-semibold">{time}</span>
-              <button onClick={() => deleteSlot(time)} className="hover:text-red-500 font-bold">✕</button>
+              <button onClick={() => deleteSlot(time)} className="hover:text-red-500">
+                <Trash2 size={14} />
+              </button>
             </div>
           ))}
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* CALENDAR & SCHEDULING */}
+        {/* CALENDAR */}
         <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
-          <h2 className="text-lg font-bold text-slate-800 mb-4">Select a Date</h2>
-          <Calendar 
-            onChange={(d) => setSelectedDate(d as Date)} 
-            value={selectedDate}
-            className="w-full border-none"
-          />
+          <h2 className="text-lg font-bold text-slate-800 mb-4 text-left">Select a Date</h2>
+          <Calendar onChange={(d) => setSelectedDate(d as Date)} value={selectedDate} className="w-full border-none" />
           <div className="mt-6">
-            <h3 className="text-sm font-semibold text-slate-500 mb-3 uppercase tracking-wider">Available Times</h3>
+            <h3 className="text-sm font-semibold text-slate-500 mb-3 uppercase tracking-wider text-left">Available Times</h3>
             <div className="grid grid-cols-2 gap-2">
               {availableTimes.map(time => (
                 <button 
                   key={time} 
                   onClick={() => requestMeeting(time)}
-                  className="p-2 text-sm border border-slate-200 rounded-md hover:bg-blue-50 hover:border-blue-300 transition-all"
+                  className="p-2 text-sm border border-slate-200 rounded-md hover:bg-blue-50 hover:border-blue-300 transition-all text-left"
                 >
                   Request {time}
                 </button>
@@ -121,18 +116,33 @@ const MeetingCalendar = () => {
           </div>
         </div>
 
-        {/* CONFIRMED MEETINGS DASHBOARD (Milestone 2 Requirement) */}
+        {/* CONFIRMED MEETINGS WITH JOIN BUTTON */}
         <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
-          <h2 className="text-lg font-bold text-green-700 mb-4">Confirmed Meetings</h2>
+          <h2 className="text-lg font-bold text-green-700 mb-4 flex items-center gap-2">
+            <CheckCircle size={20} /> Confirmed Meetings
+          </h2>
           <div className="space-y-3">
             {confirmedMeetings.length > 0 ? (
               confirmedMeetings.map(m => (
-                <div key={m.id} className="p-4 bg-green-50 border border-green-100 rounded-xl flex justify-between items-center">
-                  <div>
-                    <p className="font-bold text-green-900">{m.date}</p>
-                    <p className="text-sm text-green-700">{m.time}</p>
+                <div key={m.id} className="p-4 bg-green-50 border border-green-100 rounded-xl space-y-3">
+                  <div className="flex justify-between items-center">
+                    <div className="text-left">
+                      <p className="font-bold text-green-900">{m.date}</p>
+                      <p className="text-sm text-green-700">{m.time}</p>
+                    </div>
+                    <div className="bg-green-200 text-green-800 text-[10px] px-2 py-1 rounded font-black">CONFIRMED</div>
                   </div>
-                  <div className="bg-green-200 text-green-800 text-[10px] px-2 py-1 rounded font-black">CONFIRMED</div>
+                  
+                  {/* JOIN BUTTON FOR MILESTONE 3 */}
+                  <button 
+                    onClick={() => {
+                      const el = document.getElementById('video-call-section');
+                      el?.scrollIntoView({ behavior: 'smooth' });
+                    }}
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg text-sm font-bold flex items-center justify-center gap-2 transition-all"
+                  >
+                    <Video size={16} /> Join Video Call
+                  </button>
                 </div>
               ))
             ) : (
@@ -142,8 +152,8 @@ const MeetingCalendar = () => {
         </div>
       </div>
 
-      {/* PENDING REQUESTS TABLE */}
-      <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+      {/* ALL REQUESTS TABLE */}
+      <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100 text-left">
         <h2 className="text-lg font-bold text-slate-800 mb-4">All Meeting Requests</h2>
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left">

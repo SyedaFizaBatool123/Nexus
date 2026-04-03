@@ -1,4 +1,5 @@
 import MeetingCalendar from '../../components/MeetingCalendar';
+import VideoCall from '../../components/VideoCall';
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Users, Bell, Calendar, TrendingUp, AlertCircle, PlusCircle } from 'lucide-react';
@@ -46,8 +47,30 @@ export const EntrepreneurDashboard: React.FC = () => {
         </div>
         <main className="p-8">
    <h1 className="text-3xl font-bold mb-6">Welcome Back</h1>
-   <MeetingCalendar /> {/* Add this line */}
+   <MeetingCalendar /> 
 </main>
+<section id="video-call-section" className="scroll-mt-20">
+    <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm">
+      <div className="flex justify-between items-end mb-6">
+        <div>
+          <h2 className="text-2xl font-bold text-slate-800">Video Conference Room</h2>
+          <p className="text-slate-500">Secure, encrypted video calling for Business Nexus partners.</p>
+        </div>
+        <div className="flex gap-2">
+          <span className="flex items-center gap-1 text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded">
+            <span className="w-2 h-2 bg-green-500 rounded-full animate-ping"></span> Network: Strong
+          </span>
+        </div>
+      </div>
+
+      {/* This will now be nice and large */}
+      <div className="max-w-5xl mx-auto">
+        <VideoCall />
+      </div>
+    </div>
+  </section>
+
+
         <Link to="/investors">
           <Button
             leftIcon={<PlusCircle size={18} />}
