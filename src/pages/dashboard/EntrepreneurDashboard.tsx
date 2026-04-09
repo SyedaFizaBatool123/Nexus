@@ -118,14 +118,14 @@ export const EntrepreneurDashboard: React.FC = () => {
         </div>
       </section>
 
-      {/* SECTION 4: MILESTONE 4 - DOCUMENT CHAMBER (WIDE) */}
+      {/* - DOCUMENT CHAMBER (WIDE) */}
       <section id="document-section" className="pt-10 border-t border-slate-200">
         <DocumentChamber />
       </section>
 
-      // Inside your EntrepreneurDashboard.tsx return statement:
+      
 
-{/* Milestone 5: Payment, Wallet & History Section */}
+{/*  Payment, Wallet & History Section */}
 <section className="mt-12 space-y-8">
   <div className="flex items-center gap-4">
     <div className="h-[2px] flex-1 bg-slate-100"></div>

@@ -108,7 +108,7 @@ const DocumentChamber = () => {
                 <p className="text-slate-500 text-sm italic">Select a document from the list to sign</p>
               ) : selectedDoc.status === 'Signed' ? (
                 <div className="animate-fade-in">
-                   <p className="font-serif italic text-4xl text-blue-300 mb-2">Sarah Johnson</p>
+                   <p className="font-serif italic text-4xl text-blue-300 mb-2">AGREED</p>
                    <div className="flex items-center justify-center gap-2 text-green-400 text-xs font-bold uppercase tracking-widest">
                      <CheckCircle size={14} /> Digitally Signed
                    </div>

@@ -1,3 +1,8 @@
+import InvestmentLedger from '../../components/InvestmentLedger' ;
+import PaymentPortal from '../../components/PaymentPortal';
+import DocumentChamber from '../../components/DocumentChamber';
+import MeetingCalendar from '../../components/MeetingCalendar';
+import VideoCall from '../../components/VideoCall';
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Users, PieChart, Filter, Search, PlusCircle } from 'lucide-react';
@@ -147,6 +152,12 @@ export const InvestorDashboard: React.FC = () => {
         </Card>
       </div>
       
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-2">
+           <MeetingCalendar />
+        </div>
+        </div>
       {/* Entrepreneurs grid */}
       <div>
         <Card>
@@ -182,6 +193,45 @@ export const InvestorDashboard: React.FC = () => {
           </CardBody>
         </Card>
       </div>
+
+
+      <section id="video-call-section" className="scroll-mt-20">
+              <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm">
+                <div className="flex justify-between items-center mb-6">
+                  <div>
+                    <h2 className="text-2xl font-bold text-slate-800">Video Conference Room</h2>
+                    <p className="text-slate-500 text-sm">Join secure investment strategy sessions.</p>
+                  </div>
+                  <Badge variant="success" className="animate-pulse">● Network: Strong</Badge>
+                </div>
+                <div className="max-w-4xl mx-auto">
+                  <VideoCall />
+                </div>
+              </div>
+            </section>
+
+            {/* - DOCUMENT CHAMBER (WIDE) */}
+                  <section id="document-section" className="pt-10 border-t border-slate-200">
+                    <DocumentChamber />
+                  </section>
+
+                  <section className="mt-12 space-y-8">
+                    <div className="flex items-center gap-4">
+                      <div className="h-[2px] flex-1 bg-slate-100"></div>
+                      <h2 className="text-xs font-black text-slate-400 uppercase tracking-[0.3em]">Financial Suite</h2>
+                      <div className="h-[2px] flex-1 bg-slate-100"></div>
+                    </div>
+                  
+                    {/* Wallet Balance & History  */}
+                    <InvestmentLedger />
+                  
+                    {/* Secure Transfer & Escrow  */}
+                    <PaymentPortal />
+                  </section>
+            
+
+
+
     </div>
   );
 };
