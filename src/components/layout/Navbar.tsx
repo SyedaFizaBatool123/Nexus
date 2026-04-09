@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { Menu, X, Bell, MessageCircle, User, LogOut, Building2, CircleDollarSign } from 'lucide-react';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
+import { 
+  Menu, X, Bell, MessageCircle, User, LogOut, Building2, 
+  CircleDollarSign, Calendar, Video, FileText, CreditCard 
+} from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { Avatar } from '../ui/Avatar';
 import { Button } from '../ui/Button';
@@ -9,6 +12,7 @@ export const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -18,13 +22,23 @@ export const Navbar: React.FC = () => {
     logout();
     navigate('/login');
   };
+
+  // Helper function for smooth scrolling to sections
+  const scrollToSection = (id: string) => {
+    setIsMenuOpen(false);
+    if (location.pathname.includes('/dashboard')) {
+      const element = document.getElementById(id);
+      element?.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      // If not on dashboard, navigate there first
+      navigate(user?.role === 'entrepreneur' ? `/dashboard/entrepreneur#${id}` : `/dashboard/investor#${id}`);
+    }
+  };
   
-  // User dashboard route based on role
   const dashboardRoute = user?.role === 'entrepreneur' 
     ? '/dashboard/entrepreneur' 
     : '/dashboard/investor';
   
-  // User profile route based on role and ID
   const profileRoute = user 
     ? `/profile/${user.role}/${user.id}` 
     : '/login';
@@ -35,6 +49,28 @@ export const Navbar: React.FC = () => {
       text: 'Dashboard',
       path: dashboardRoute,
     },
+    // --- NEW MILESTONE 7 CONNECTIONS ---
+    {
+      icon: <Calendar size={18} />,
+      text: 'Meetings',
+      onClick: () => scrollToSection('meetings-section'),
+    },
+    {
+      icon: <Video size={18} />,
+      text: 'Video Call',
+      onClick: () => scrollToSection('video-call-section'),
+    },
+    {
+      icon: <FileText size={18} />,
+      text: 'Documents',
+      onClick: () => scrollToSection('document-chamber'),
+    },
+    {
+      icon: <CreditCard size={18} />,
+      text: 'Payments',
+      onClick: () => scrollToSection('payment-portal'),
+    },
+    // ---------------------------------
     {
       icon: <MessageCircle size={18} />,
       text: 'Messages',
@@ -44,23 +80,17 @@ export const Navbar: React.FC = () => {
       icon: <Bell size={18} />,
       text: 'Notifications',
       path: user ? '/notifications' : '/login',
-    },
-    {
-      icon: <User size={18} />,
-      text: 'Profile',
-      path: profileRoute,
     }
   ];
   
   return (
-    <nav className="bg-white shadow-md">
+    <nav className="bg-white shadow-md sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
-          {/* Logo and brand */}
           <div className="flex-shrink-0 flex items-center">
             <Link to="/" className="flex items-center space-x-2">
               <div className="w-8 h-8 bg-primary-600 rounded-md flex items-center justify-center">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-white">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-white">
                   <path d="M20 7H4C2.89543 7 2 7.89543 2 9V19C2 20.1046 2.89543 21 4 21H20C21.1046 21 22 20.1046 22 19V9C22 7.89543 21.1046 7 20 7Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                   <path d="M16 21V5C16 3.89543 15.1046 3 14 3H10C8.89543 3 8 3.89543 8 5V21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
@@ -69,62 +99,63 @@ export const Navbar: React.FC = () => {
             </Link>
           </div>
           
-          {/* Desktop navigation */}
-          <div className="hidden md:flex md:items-center md:ml-6">
+          <div className="hidden lg:flex lg:items-center lg:ml-6">
             {user ? (
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-1">
                 {navLinks.map((link, index) => (
-                  <Link
-                    key={index}
-                    to={link.path}
-                    className="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50 rounded-md transition-colors duration-200"
-                  >
-                    <span className="mr-2">{link.icon}</span>
-                    {link.text}
-                  </Link>
+                  link.path ? (
+                    <Link
+                      key={index}
+                      to={link.path}
+                      className="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50 rounded-md transition-colors"
+                    >
+                      <span className="mr-1.5 text-gray-400">{link.icon}</span>
+                      {link.text}
+                    </Link>
+                  ) : (
+                    <button
+                      key={index}
+                      onClick={link.onClick}
+                      className="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50 rounded-md transition-colors"
+                    >
+                      <span className="mr-1.5 text-gray-400">{link.icon}</span>
+                      {link.text}
+                    </button>
+                  )
                 ))}
                 
-                <Button 
-                  variant="ghost"
-                  onClick={handleLogout}
-                  leftIcon={<LogOut size={18} />}
-                >
-                  Logout
-                </Button>
-                
-                <Link to={profileRoute} className="flex items-center space-x-2 ml-2">
+                <div className="h-6 w-px bg-gray-200 mx-2" />
+
+                <Link to={profileRoute} className="flex items-center space-x-2 px-3">
                   <Avatar
                     src={user.avatarUrl}
                     alt={user.name}
-                    size="sm"
+                    size="xs"
                     status={user.isOnline ? 'online' : 'offline'}
                   />
-                  <span className="text-sm font-medium text-gray-700">{user.name}</span>
+                  <span className="text-sm font-semibold text-gray-900">{user.name}</span>
                 </Link>
+
+                <Button 
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleLogout}
+                  className="text-gray-500 hover:text-red-600"
+                >
+                  <LogOut size={18} />
+                </Button>
               </div>
             ) : (
               <div className="flex items-center space-x-4">
-                <Link to="/login">
-                  <Button variant="outline">Log in</Button>
-                </Link>
-                <Link to="/register">
-                  <Button>Sign up</Button>
-                </Link>
+                <Link to="/login"><Button variant="outline">Log in</Button></Link>
+                <Link to="/register"><Button>Sign up</Button></Link>
               </div>
             )}
           </div>
           
-          {/* Mobile menu button */}
-          <div className="md:hidden flex items-center">
-            <button
-              onClick={toggleMenu}
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-primary-600 hover:bg-gray-50 focus:outline-none"
-            >
-              {isMenuOpen ? (
-                <X className="block h-6 w-6" />
-              ) : (
-                <Menu className="block h-6 w-6" />
-              )}
+          <div className="lg:hidden flex items-center">
+            <button onClick={toggleMenu} className="p-2 rounded-md text-gray-700 hover:bg-gray-50">
+              {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
           </div>
         </div>
@@ -132,67 +163,23 @@ export const Navbar: React.FC = () => {
       
       {/* Mobile menu */}
       {isMenuOpen && (
-        <div className="md:hidden bg-white border-b border-gray-200 animate-fade-in">
-          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-            {user ? (
-              <>
-                <div className="flex items-center space-x-3 px-3 py-2">
-                  <Avatar
-                    src={user.avatarUrl}
-                    alt={user.name}
-                    size="sm"
-                    status={user.isOnline ? 'online' : 'offline'}
-                  />
-                  <div>
-                    <p className="text-sm font-medium text-gray-800">{user.name}</p>
-                    <p className="text-xs text-gray-500 capitalize">{user.role}</p>
-                  </div>
-                </div>
-                
-                <div className="border-t border-gray-200 pt-2">
-                  {navLinks.map((link, index) => (
-                    <Link
-                      key={index}
-                      to={link.path}
-                      className="flex items-center px-3 py-2 text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50 rounded-md"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      <span className="mr-3">{link.icon}</span>
-                      {link.text}
-                    </Link>
-                  ))}
-                  
-                  <button
-                    onClick={() => {
-                      handleLogout();
-                      setIsMenuOpen(false);
-                    }}
-                    className="flex w-full items-center px-3 py-2 text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50 rounded-md"
-                  >
-                    <LogOut size={18} className="mr-3" />
-                    Logout
-                  </button>
-                </div>
-              </>
+        <div className="lg:hidden bg-white border-b border-gray-200 px-4 pt-2 pb-6 space-y-1">
+          {user && navLinks.map((link, index) => (
+            link.path ? (
+              <Link key={index} to={link.path} onClick={() => setIsMenuOpen(false)} className="flex items-center py-3 text-base font-medium text-gray-700 border-b border-gray-50">
+                <span className="mr-4">{link.icon}</span> {link.text}
+              </Link>
             ) : (
-              <div className="flex flex-col space-y-2 px-3 py-2">
-                <Link 
-                  to="/login" 
-                  className="w-full"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  <Button variant="outline" fullWidth>Log in</Button>
-                </Link>
-                <Link 
-                  to="/register" 
-                  className="w-full"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  <Button fullWidth>Sign up</Button>
-                </Link>
-              </div>
-            )}
-          </div>
+              <button key={index} onClick={link.onClick} className="flex w-full items-center py-3 text-base font-medium text-gray-700 border-b border-gray-50">
+                <span className="mr-4">{link.icon}</span> {link.text}
+              </button>
+            )
+          ))}
+          {user && (
+            <button onClick={handleLogout} className="flex w-full items-center py-3 text-base font-medium text-red-600">
+              <LogOut size={18} className="mr-4" /> Logout
+            </button>
+          )}
         </div>
       )}
     </nav>

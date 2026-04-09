@@ -1,3 +1,4 @@
+import {InfoTooltip} from '../../components/InfoTooltip' ;
 import InvestmentLedger from '../../components/InvestmentLedger' ;
 import PaymentPortal from '../../components/PaymentPortal';
 import DocumentChamber from '../../components/DocumentChamber';
@@ -86,7 +87,11 @@ export const EntrepreneurDashboard: React.FC = () => {
 
       {/* SECTION 2: CALENDAR & INVESTORS GRID */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2">
+        <div id="meetings-section" className="lg:col-span-2">
+          <h2 className="text-2xl font-bold flex items-center">
+    Meeting Schedule
+    <InfoTooltip content="Set your availability and manage upcoming investor calls." />
+  </h2>
            <MeetingCalendar />
         </div>
         <div className="space-y-6">
@@ -119,19 +124,29 @@ export const EntrepreneurDashboard: React.FC = () => {
       </section>
 
       {/* - DOCUMENT CHAMBER (WIDE) */}
+      <div id="document-chamber" className="pt-20">
       <section id="document-section" className="pt-10 border-t border-slate-200">
+        <h2 className="text-2xl font-bold flex items-center">
+    Document Chamber
+    <InfoTooltip content="Securely upload and sign investment contracts and NDAs." />
+  </h2>
         <DocumentChamber />
       </section>
+      </div>
 
       
 
 {/*  Payment, Wallet & History Section */}
-<section className="mt-12 space-y-8">
+<section id="payment-portal" className="mt-12 space-y-8">
   <div className="flex items-center gap-4">
     <div className="h-[2px] flex-1 bg-slate-100"></div>
     <h2 className="text-xs font-black text-slate-400 uppercase tracking-[0.3em]">Financial Suite</h2>
     <div className="h-[2px] flex-1 bg-slate-100"></div>
   </div>
+  <h2 className="text-2xl font-bold flex items-center">
+    Secure Payment Portal
+    <InfoTooltip content="Track milestones and manage escrow transfers safely." />
+  </h2>
 
   {/* Wallet Balance & History  */}
   <InvestmentLedger />
