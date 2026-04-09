@@ -1,3 +1,5 @@
+import InvestmentLedger from '../../components/InvestmentLedger' ;
+import PaymentPortal from '../../components/PaymentPortal';
 import DocumentChamber from '../../components/DocumentChamber';
 import MeetingCalendar from '../../components/MeetingCalendar';
 import VideoCall from '../../components/VideoCall';
@@ -120,6 +122,25 @@ export const EntrepreneurDashboard: React.FC = () => {
       <section id="document-section" className="pt-10 border-t border-slate-200">
         <DocumentChamber />
       </section>
+
+      // Inside your EntrepreneurDashboard.tsx return statement:
+
+{/* Milestone 5: Payment, Wallet & History Section */}
+<section className="mt-12 space-y-8">
+  <div className="flex items-center gap-4">
+    <div className="h-[2px] flex-1 bg-slate-100"></div>
+    <h2 className="text-xs font-black text-slate-400 uppercase tracking-[0.3em]">Financial Suite</h2>
+    <div className="h-[2px] flex-1 bg-slate-100"></div>
+  </div>
+
+  {/* Wallet Balance & History  */}
+  <InvestmentLedger />
+
+  {/* Secure Transfer & Escrow  */}
+  <PaymentPortal />
+</section>
+
+  
 
       {/* SECTION 5: COLLABORATION REQUESTS LIST */}
       <Card>
